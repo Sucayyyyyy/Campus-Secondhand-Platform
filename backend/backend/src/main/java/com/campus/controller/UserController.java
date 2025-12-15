@@ -19,6 +19,7 @@ public class UserController {
      * API: 用户注册接口
      * 路径: POST /api/user/register
      * 接收: JSON 格式的 User 对象（包含 username 和 password）
+     *
      * @param user 包含注册信息的 User 对象
      * @return 注册结果的 JSON 响应
      */
@@ -33,21 +34,23 @@ public class UserController {
             return result;
         }
 
-        // 2. 调用 Service 层进行注册逻辑处理
-        try {
-            boolean success = userService.registerUser(user);
-            if (success) {
-                result.put("success", true);
-                result.put("message", "用户注册成功");
-            } else {
-                result.put("success", false);
-                result.put("message", "注册失败：用户名已存在或数据库错误");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "服务器内部错误");
-        }
-        return result;
+        // 2. 直接调用 Service 层新方法，并返回其结果
+        return userService.register(user);
     }
-}
+        /**
+         * 用户登录接口
+         * URL: POST /api/user/login
+         */
+        @PostMapping("/login")
+        public Map<String, Object> login (@RequestBody User user){
+            // 基础参数校验
+            if (user.getUsername() == null || user.getPassword() == null) {
+                Map<String, Object> result = new HashMap<>();
+                result.put("success", false);
+                result.put("msg", "用户名或密码不能为空。");
+                return result;
+            }
+
+            return userService.login(user);
+        }
+    }
