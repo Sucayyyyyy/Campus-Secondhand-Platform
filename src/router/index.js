@@ -3,6 +3,7 @@ import AdminLogin from '@/views/admin/AdminLogin.vue';
 import Home from '@/views/front/Home.vue' 
 import { createPinia } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
+import ProductDetail from '@/views/front/ProductDetail.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [],
@@ -19,6 +20,13 @@ const routes = [
     path: '/',
     name: 'Home',
     component: () => import('@/views/front/Home.vue')
+  },
+
+  // **新增：商品详情页**
+  {
+    path: '/detail/:id', // 使用动态参数 :id 来匹配商品ID
+    name: 'ProductDetail',
+    component: ProductDetail 
   },
   // 后台登录页
   {

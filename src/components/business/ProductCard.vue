@@ -35,7 +35,6 @@ const props = defineProps({
 
 // 点击卡片跳转到商品详情页
 const goToDetail = (id) => {
-  // 假设详情页的路由是 /detail/:id
   router.push(`/detail/${id}`);
 };
 </script>
