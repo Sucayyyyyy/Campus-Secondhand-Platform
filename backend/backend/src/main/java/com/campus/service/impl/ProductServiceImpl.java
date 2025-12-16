@@ -3,6 +3,8 @@ package com.campus.service.impl;
 import com.campus.mapper.ProductMapper;
 import com.campus.model.Product;
 import com.campus.service.ProductService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +15,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired // 自动注入 ProductMapper
     private ProductMapper productMapper;
 
-    @Override
-    public List<Product> getAvailableProducts() {
-        return productMapper.selectAllAvailableProducts();
-    }
+
 
     @Override
     public Map<String, Object> publishProduct(Product product) {
@@ -83,25 +82,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Map<String, Object> getProductList() {
+    public Map<String, Object> getProductList(Integer pageNum, Integer pageSize, String keyword) {
         Map<String, Object> result = new HashMap<>();
 
-        try {
-            // 1. 调用 Mapper 查询所有在售商品
-            List<Product> productList = productMapper.selectAllAvailableProducts();
+        // 1. 设置默认分页参数
+        if (pageNum == null) pageNum = 1;
+        if (pageSize == null) pageSize = 10;
 
-            // 2. 封装结果
-            if (productList != null && !productList.isEmpty()) {
-                result.put("success", true);
-                result.put("message", "商品列表查询成功");
-                result.put("data", productList);
-                result.put("total", productList.size());
-            } else {
-                result.put("success", true); // 列表为空也算成功
-                result.put("message", "暂无在售商品");
-                result.put("data", new ArrayList<>()); // 返回空列表，避免前端报错
-                result.put("total", 0);
-            }
+        try {
+            // 2. 启动 PageHelper 分页功能
+            PageHelper.startPage(pageNum, pageSize);
+
+            // 3. 构建查询参数 Map
+            Map<String, Object> params = new HashMap<>();
+            params.put("keyword", keyword);
+
+            // 4. 调用 Mapper（PageHelper 会自动拦截并进行分页）
+            List<Product> productList = productMapper.selectAllAvailableProducts(params);
+
+            // 5. 使用 PageInfo 包装查询结果，获取详细的分页信息
+            PageInfo<Product> pageInfo = new PageInfo<>(productList);
+
+            // 6. 封装结果
+            result.put("success", true);
+            result.put("message", "商品列表查询成功");
+            result.put("data", pageInfo.getList()); // 当前页数据
+            result.put("total", pageInfo.getTotal()); // 总记录数
+            result.put("pages", pageInfo.getPages()); // 总页数
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);

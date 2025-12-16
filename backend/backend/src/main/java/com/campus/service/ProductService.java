@@ -10,8 +10,9 @@ public interface ProductService {
      * 获取所有在售商品列表
      * @return 在售商品列表
      */
+    /*
     List<Product> getAvailableProducts();
-
+*/
     /**
      * 发布新商品
      * @param product 包含商品详情的对象
@@ -25,10 +26,13 @@ public interface ProductService {
      */
     Map<String, Object> getProductDetail(Integer productId);
     /**
-     * 获取所有在售商品列表
-     * @return 包含商品列表数据或错误信息的 Map
+     获取商品列表（支持分页和搜索）
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @param keyword 搜索关键词
+     * @return 包含商品列表和分页信息的 Map
      */
-    Map<String, Object> getProductList();
+    Map<String, Object> getProductList(Integer pageNum, Integer pageSize, String keyword);
     /**
      * 修改商品信息
      * @param product 包含ID、sellerId和要更新字段的对象

@@ -2,7 +2,7 @@ package com.campus.mapper;
 
 import com.campus.model.Product;
 import org.apache.ibatis.annotations.Param;
-
+import java.util.Map;
 import java.util.List;
 
 /**
@@ -14,7 +14,7 @@ public interface ProductMapper {
      * 查询所有在售商品列表
      * @return 商品列表
      */
-    List<Product> selectAllAvailableProducts();
+    List<Product> selectAllAvailableProducts(Map<String, Object> params);
     int insertProduct(Product product);
 
     /**

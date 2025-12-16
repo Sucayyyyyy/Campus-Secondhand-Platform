@@ -19,12 +19,12 @@ public class ProductController {
      * 路径: GET /api/products
      *
      * @return 包含商品列表的 JSON 响应
-     */
+     *//*
     @GetMapping("/products")
     public List<Product> getProducts() {
         return productService.getAvailableProducts();
     }
-
+*/
 
     /**
      * API: 发布商品接口
@@ -59,9 +59,15 @@ public class ProductController {
      * @return 包含商品列表的 Map
      */
     @GetMapping("/list")
-    public Map<String, Object> getList() {
-        return productService.getProductList();
-    }
+    public Map<String, Object> getList(
+                @RequestParam(defaultValue = "1") Integer pageNum,
+                @RequestParam(defaultValue = "10") Integer pageSize,
+                @RequestParam(required = false) String keyword){
+
+            return productService.getProductList(pageNum, pageSize, keyword);
+
+        }
+
 
     @PutMapping("/{id}")
     public Map<String, Object> update(@PathVariable("id") Integer id, @RequestBody Product product) {
