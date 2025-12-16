@@ -13,6 +13,6 @@ public interface ProductMapper {
      * @return 商品列表
      */
     List<Product> selectAllAvailableProducts();
+    int insertProduct(Product product);
 
-    // TODO: 后面会添加 insert, update, delete 等方法
 }

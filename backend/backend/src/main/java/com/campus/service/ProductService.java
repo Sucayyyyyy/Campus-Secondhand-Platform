@@ -2,6 +2,7 @@ package com.campus.service;
 
 import com.campus.model.Product;
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
 
@@ -10,4 +11,11 @@ public interface ProductService {
      * @return 在售商品列表
      */
     List<Product> getAvailableProducts();
+
+    /**
+     * 发布新商品
+     * @param product 包含商品详情的对象
+     * @return 包含 success 状态和 message 的 Map
+     */
+    Map<String, Object> publishProduct(Product product);
 }
