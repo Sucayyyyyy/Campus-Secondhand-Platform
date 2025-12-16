@@ -38,4 +38,10 @@ public interface ProductMapper {
      */
     int deleteProduct(@Param("id") Integer productId, @Param("sellerId") Integer sellerId);
 
+ /**
+            * 查询特定用户发布的商品列表（支持分页）
+            * @param params 必须包含 sellerId，也可以包含 keyword
+     * @return Product 对象列表
+     */
+    List<Product> selectProductsBySellerId(Map<String, Object> params);
 }

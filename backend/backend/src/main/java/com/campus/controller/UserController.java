@@ -1,6 +1,7 @@
 package com.campus.controller;
 
 import com.campus.model.User;
+import com.campus.service.ProductService;
 import com.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,9 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private UserService userService; // 注入 UserService
+    private UserService userService; 
+    @Autowired
+    private ProductService productService;
 
     /**
      * API: 用户注册接口
@@ -61,10 +64,24 @@ public class UserController {
      */
     @GetMapping("/info")
     public Map<String, Object> getUserInfo() {
-
-        // 🚨 临时处理：这里是安全漏洞，假设用户已登录，ID 为 1
         Integer currentUserId = 1;
 
         return userService.getUserInfo(currentUserId);
+    }
+
+    /**
+     * API: 获取当前用户发布的商品列表
+     * 路径: GET /api/user/products?pageNum=1&pageSize=10
+     * @return 包含用户发布的商品列表及分页信息的 Map
+     */
+    @GetMapping("/products")
+    public Map<String, Object> getUserProducts(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String keyword) {
+
+        Integer currentUserId = 1;
+
+        return productService.getProductsBySellerId(currentUserId, pageNum, pageSize, keyword);
     }
     }

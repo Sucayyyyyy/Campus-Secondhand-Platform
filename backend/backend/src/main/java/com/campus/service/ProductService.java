@@ -47,4 +47,9 @@ public interface ProductService {
      * @return 包含 success 状态和 message 的 Map
      */
     Map<String, Object> deleteProduct(Integer productId, Integer sellerId);
+
+    /**
+     * 获取用户发布的商品列表（支持分页和搜索）
+     */
+    Map<String, Object> getProductsBySellerId(Integer sellerId, Integer pageNum, Integer pageSize, String keyword);
 }

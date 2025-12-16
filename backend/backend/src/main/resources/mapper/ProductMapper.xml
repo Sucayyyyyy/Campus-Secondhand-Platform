@@ -92,4 +92,18 @@ WHERE id = #{id}
         WHERE id = #{id} AND seller_id = #{sellerId}
     </update>
 
+    <select id="selectProductsBySellerId" resultMap="ProductMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        t_product
+        WHERE
+        seller_id = #{sellerId}
+        <if test="keyword != null and keyword != ''">
+            AND (name LIKE CONCAT('%', #{keyword}, '%')
+            OR description LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY
+        publish_time DESC
+    </select>
 </mapper>

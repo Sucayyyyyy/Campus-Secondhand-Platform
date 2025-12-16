@@ -182,4 +182,44 @@ public class ProductServiceImpl implements ProductService {
         return result;
     }
 
+    @Override
+    public Map<String, Object> getProductsBySellerId(Integer sellerId, Integer pageNum, Integer pageSize, String keyword) {
+        Map<String, Object> result = new HashMap<>();
+
+        if (sellerId == null) {
+            result.put("success", false);
+            result.put("message", "用户ID不能为空");
+            return result;
+        }
+
+        if (pageNum == null) pageNum = 1;
+        if (pageSize == null) pageSize = 10;
+
+        try {
+            PageHelper.startPage(pageNum, pageSize);
+
+            // 1. 构建查询参数 Map，必须包含 sellerId
+            Map<String, Object> params = new HashMap<>();
+            params.put("sellerId", sellerId);
+            params.put("keyword", keyword);
+
+            // 2. 调用 Mapper
+            List<Product> productList = productMapper.selectProductsBySellerId(params);
+
+            // 3. 包装结果
+            PageInfo<Product> pageInfo = new PageInfo<>(productList);
+
+            result.put("success", true);
+            result.put("message", "用户商品列表查询成功");
+            result.put("data", pageInfo.getList());
+            result.put("total", pageInfo.getTotal());
+            result.put("pages", pageInfo.getPages());
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "服务器内部错误");
+        }
+        return result;
+    }
+
 }
