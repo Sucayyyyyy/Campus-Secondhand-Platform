@@ -19,4 +19,6 @@ public interface UserService {
      * @return 登录结果（成功/失败信息及用户信息）
      */
     Map<String, Object> login(User user);
+//获取用户详情
+    Map<String, Object> getUserInfo(Integer userId);
 }

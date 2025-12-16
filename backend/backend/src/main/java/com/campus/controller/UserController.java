@@ -53,4 +53,18 @@ public class UserController {
 
             return userService.login(user);
         }
+
+    /**
+     * API: 获取当前用户详情
+     * 路径: GET /api/user/info
+     * * @return 包含用户信息的 Map
+     */
+    @GetMapping("/info")
+    public Map<String, Object> getUserInfo() {
+
+        // 🚨 临时处理：这里是安全漏洞，假设用户已登录，ID 为 1
+        Integer currentUserId = 1;
+
+        return userService.getUserInfo(currentUserId);
+    }
     }

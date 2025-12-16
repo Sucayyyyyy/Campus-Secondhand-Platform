@@ -8,4 +8,8 @@ public interface UserMapper {
 
     // 插入新用户
     int insertUser(User user);
+    /**
+     * 根据用户ID查询用户详情
+     */
+    User selectById(Integer id);
 }

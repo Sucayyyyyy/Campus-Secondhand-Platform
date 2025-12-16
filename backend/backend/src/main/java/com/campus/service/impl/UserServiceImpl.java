@@ -90,4 +90,31 @@ public class UserServiceImpl implements UserService {
 
         return result;
     }
+
+    @Override
+    public Map<String, Object> getUserInfo(Integer userId) {
+        Map<String, Object> result = new HashMap<>();
+
+        if (userId == null) {
+            result.put("success", false);
+            result.put("message", "用户ID不能为空");
+            return result;
+        }
+
+        User user = userMapper.selectById(userId);
+
+        if (user != null) {
+            result.put("success", true);
+            result.put("message", "查询成功");
+
+
+            user.setPassword(null); // 清除密码
+
+            result.put("data", user);
+        } else {
+            result.put("success", false);
+            result.put("message", "用户不存在");
+        }
+        return result;
+    }
 }
