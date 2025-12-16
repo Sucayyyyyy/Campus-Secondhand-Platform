@@ -111,4 +111,37 @@ public class ProductServiceImpl implements ProductService {
         return result;
     }
 
+    @Override
+    public Map<String, Object> updateProduct(Product product) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 1. 关键参数校验：ID和卖家ID必须有
+        if (product.getId() == null || product.getSellerId() == null) {
+            result.put("success", false);
+            result.put("message", "商品ID和卖家ID不能为空");
+            return result;
+        }
+
+        try {
+            // 2. 调用 Mapper 更新数据
+            // 注意：Mapper 中的 SQL 已经通过 ID 和 sellerId 进行了双重校验
+            int rows = productMapper.updateProduct(product);
+
+            if (rows > 0) {
+                result.put("success", true);
+                result.put("message", "商品信息更新成功");
+            } else {
+                result.put("success", false);
+                // 可能是商品ID不存在，或者 sellerId 不匹配（用户尝试修改别人的商品）
+                result.put("message", "更新失败：商品不存在或您无权修改");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "服务器内部错误");
+        }
+
+        return result;
+    }
+
 }

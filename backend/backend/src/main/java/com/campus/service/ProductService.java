@@ -29,4 +29,10 @@ public interface ProductService {
      * @return 包含商品列表数据或错误信息的 Map
      */
     Map<String, Object> getProductList();
+    /**
+     * 修改商品信息
+     * @param product 包含ID、sellerId和要更新字段的对象
+     * @return 包含 success 状态和 message 的 Map
+     */
+    Map<String, Object> updateProduct(Product product);
 }

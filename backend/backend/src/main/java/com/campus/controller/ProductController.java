@@ -58,4 +58,11 @@ public class ProductController {
     public Map<String, Object> getList() {
         return productService.getProductList();
     }
+
+    @PutMapping("/{id}")
+    public Map<String, Object> update(@PathVariable("id") Integer id, @RequestBody Product product) {
+        // 1. 从路径参数获取ID
+        product.setId(id);
+        return productService.updateProduct(product);
+    }
 }

@@ -22,4 +22,11 @@ public interface ProductMapper {
      */
     Product selectById(Integer id);
 
+    /**
+     * 根据ID更新商品信息
+     * @param product 包含ID和要更新字段的对象
+     * @return 影响的行数 (通常为 1)
+     */
+    int updateProduct(Product product);
+
 }
