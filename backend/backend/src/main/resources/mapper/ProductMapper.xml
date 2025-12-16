@@ -53,4 +53,18 @@
                                            #{publishTime}
                                        )
     </insert>
+    <sql id="Base_Column_List">
+        id, name, category_id, seller_id, price, description, image_url, status, publish_time
+    </sql>
+
+
+<select id="selectById" parameterType="java.lang.Integer" resultType="com.campus.model.Product">
+SELECT
+<include refid="Base_Column_List" />
+FROM t_product
+WHERE id = #{id}
+</select>
+
+
+
 </mapper>

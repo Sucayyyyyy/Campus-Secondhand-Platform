@@ -18,4 +18,10 @@ public interface ProductService {
      * @return 包含 success 状态和 message 的 Map
      */
     Map<String, Object> publishProduct(Product product);
+    /**
+     * 获取单个商品详情
+     * @param productId 商品ID
+     * @return 包含商品数据或错误信息的 Map
+     */
+    Map<String, Object> getProductDetail(Integer productId);
 }

@@ -38,4 +38,15 @@ public class ProductController {
         // Service 层已经做了部分校验，这里可以直接调用业务逻辑
         return productService.publishProduct(product);
     }
+        /**
+         * API: 获取单个商品详情接口
+         * 路径: GET /api/product/{id}
+         * @param id 商品ID
+         * @return 包含商品详情的 Map
+         */
+        @GetMapping("/{id}")
+        public Map<String, Object> getDetail(@PathVariable("id") Integer id) {
+            return productService.getProductDetail(id);
+
+    }
 }

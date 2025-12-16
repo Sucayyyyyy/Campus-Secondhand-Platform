@@ -15,4 +15,11 @@ public interface ProductMapper {
     List<Product> selectAllAvailableProducts();
     int insertProduct(Product product);
 
+    /**
+     * 根据商品ID查询商品详情
+     * @param id 商品ID
+     * @return 对应的 Product 对象
+     */
+    Product selectById(Integer id);
+
 }

@@ -58,4 +58,31 @@ public class ProductServiceImpl implements ProductService {
         return result;
     }
 
+    @Override
+    public Map<String, Object> getProductDetail(Integer productId) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 1. 参数校验
+        if (productId == null || productId <= 0) {
+            result.put("success", false);
+            result.put("message", "商品ID无效");
+            return result;
+        }
+
+        // 2. 调用 Mapper 查询数据
+        Product product = productMapper.selectById(productId);
+
+        // 3. 封装结果
+        if (product != null) {
+            result.put("success", true);
+            result.put("message", "查询成功");
+            result.put("data", product); // 返回 Product 完整对象
+        } else {
+            result.put("success", false);
+            result.put("message", "未找到该商品");
+        }
+
+        return result;
+    }
+
 }
