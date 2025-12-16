@@ -6,10 +6,7 @@ import com.campus.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -80,6 +77,35 @@ public class ProductServiceImpl implements ProductService {
         } else {
             result.put("success", false);
             result.put("message", "未找到该商品");
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getProductList() {
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            // 1. 调用 Mapper 查询所有在售商品
+            List<Product> productList = productMapper.selectAllAvailableProducts();
+
+            // 2. 封装结果
+            if (productList != null && !productList.isEmpty()) {
+                result.put("success", true);
+                result.put("message", "商品列表查询成功");
+                result.put("data", productList);
+                result.put("total", productList.size());
+            } else {
+                result.put("success", true); // 列表为空也算成功
+                result.put("message", "暂无在售商品");
+                result.put("data", new ArrayList<>()); // 返回空列表，避免前端报错
+                result.put("total", 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "服务器内部错误");
         }
 
         return result;

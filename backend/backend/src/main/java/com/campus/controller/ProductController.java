@@ -49,4 +49,13 @@ public class ProductController {
             return productService.getProductDetail(id);
 
     }
+    /**
+     * API: 获取商品列表接口
+     * 路径: GET /api/product/list
+     * @return 包含商品列表的 Map
+     */
+    @GetMapping("/list")
+    public Map<String, Object> getList() {
+        return productService.getProductList();
+    }
 }

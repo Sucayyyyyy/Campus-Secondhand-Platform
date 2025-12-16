@@ -19,20 +19,12 @@
 
     <select id="selectAllAvailableProducts" resultMap="ProductMap">
         SELECT
-            id,
-            name,
-            category_id,
-            seller_id,
-            price,
-            description,
-            image_url,
-            status,
-            publish_time
-        FROM
-            product
-        WHERE
-            status = 1  ORDER BY
-            publish_time DESC  </select>
+        <include refid="Base_Column_List" />  FROM
+        t_product  WHERE
+        status = 1
+        ORDER BY
+        publish_time DESC
+    </select>
 
     <insert id="insertProduct" parameterType="com.campus.model.Product" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_product (

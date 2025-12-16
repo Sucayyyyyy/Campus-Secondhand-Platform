@@ -24,4 +24,9 @@ public interface ProductService {
      * @return 包含商品数据或错误信息的 Map
      */
     Map<String, Object> getProductDetail(Integer productId);
+    /**
+     * 获取所有在售商品列表
+     * @return 包含商品列表数据或错误信息的 Map
+     */
+    Map<String, Object> getProductList();
 }
