@@ -41,7 +41,14 @@ service.interceptors.response.use(
 // **********************************
 // 4. 核心接口函数
 // **********************************
-
+/**
+ * 获取校园二手商品列表
+ * @param {object} query - 查询参数 (如 keyword, categoryId, page, size)
+ */
+export function getProductList(query) { 
+    // 假设后端获取商品列表的接口是 GET /product/list
+    return service.get('/product/list', { params: query });
+}
 
 
 /**

@@ -1,18 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AdminLogin from '@/views/admin/AdminLogin.vue';
-import Home from '@/views/front/Home.vue' 
-import { createPinia } from 'pinia';
+ 
 import { useAuthStore } from '@/stores/auth';
-import ProductDetail from '@/views/front/ProductDetail.vue';
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
-})
-// 3. 必须先实例化 Pinia，因为路由守卫在 Vue 应用挂载前执行
-const pinia = createPinia();
-const authStore = useAuthStore(pinia); // 实例化 Store
 
-export default router
 
 const routes = [
   // 前台首页
@@ -26,7 +15,7 @@ const routes = [
   {
     path: '/detail/:id', // 使用动态参数 :id 来匹配商品ID
     name: 'ProductDetail',
-    component: ProductDetail 
+    component: () => import('@/views/front/ProductDetail.vue')
   },
   // 后台登录页
   {
@@ -64,7 +53,19 @@ const routes = [
   
 ];
 
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: routes,
+})
+
+// 引入一个全局变量来存储 authStore，确保它只实例化一次
+let authStore;
 router.beforeEach((to, from, next) => {
+  // 1. 【核心修复】：在守卫第一次执行时才实例化 Store
+  if (!authStore) {
+    authStore = useAuthStore(); 
+  }
+  
   // 检查目标路由是否需要认证（我们使用 meta: { requiresAuth: true } 标记）
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   
@@ -88,3 +89,4 @@ router.beforeEach((to, from, next) => {
 });
 
 
+export default router

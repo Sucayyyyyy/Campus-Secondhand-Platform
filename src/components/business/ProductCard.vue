@@ -17,12 +17,11 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-// 接收父组件传递的商品数据
+
 const props = defineProps({
   product: {
     type: Object,
     required: true,
-    // 定义商品对象的结构，方便开发
     default: () => ({ 
       id: 0, 
       name: '示例商品名称', 
@@ -33,7 +32,7 @@ const props = defineProps({
   }
 });
 
-// 点击卡片跳转到商品详情页
+
 const goToDetail = (id) => {
   router.push(`/detail/${id}`);
 };
@@ -41,7 +40,7 @@ const goToDetail = (id) => {
 
 <style scoped>
 .product-card {
-  /* 基础卡片样式 */
+ 
   border: 1px solid #eee;
   border-radius: 8px;
   overflow: hidden;
@@ -56,8 +55,8 @@ const goToDetail = (id) => {
 }
 .product-image {
   width: 100%;
-  height: 150px; /* 固定高度 */
-  object-fit: cover; /* 保证图片不变形 */
+  height: 150px; 
+  object-fit: cover; 
   display: block;
 }
 .product-info {
@@ -73,7 +72,7 @@ const goToDetail = (id) => {
   text-overflow: ellipsis;
 }
 .price {
-  color: #ff4500; /* 突出价格 */
+  color: #ff4500; 
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 5px;
