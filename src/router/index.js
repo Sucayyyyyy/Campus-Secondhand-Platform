@@ -26,11 +26,10 @@ const routes = [
     name: 'AdminLogin',
     component: () => import('@/views/admin/AdminLogin.vue')
   },
-  // 后台管理面板（现在可以先指向一个空白页或登录页）
+  // 后台管理面板
   {
-    path: '/admin/dashboard',
-    name: 'AdminDashboard',
-    // 假设您未来会创建一个 Dashboard 组件
+    path: '/admin',
+    name: 'Admin',
     component: () => import('@/views/admin/AdminLayout.vue'),
     redirect: '/admin/dashboard', // 访问 /admin 自动重定向
     meta: { requiresAuth: true }, // 整个后台区域都需要权限

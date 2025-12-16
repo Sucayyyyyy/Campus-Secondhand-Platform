@@ -42,17 +42,38 @@ service.interceptors.response.use(
 // 4. 核心接口函数
 // **********************************
 
+
+
 /**
- * 获取校园二手商品列表
- * @param {object} query - 查询参数，如 { categoryId: 1, keyword: '书本' }
- * @returns {Promise<object>} 后端返回的商品列表数据
+ * 删除指定ID的商品 (DELETE)
+ * @param {number} id - 商品ID
  */
-export function getProductList(query) {
-    // 假设您的后端获取商品列表的接口是 /product/list
-    return service.get('/product/list', { params: query });
+export function deleteProduct(id) {
+    // 假设后端删除接口是 DELETE /product/{id}
+    return service.delete(`/product/${id}`);
 }
 
-// 可添加其他接口，如获取详情
+/**
+ * 获取指定ID的商品详情 (GET)
+ * @param {number} id - 商品ID
+ */
 export function getProductDetail(id) {
+    // 假设后端获取详情接口是 GET /product/{id}
     return service.get(`/product/${id}`);
+}
+
+/**
+ * 创建新商品 (POST)
+ */
+export function createProduct(data) {
+    // 假设后端创建接口是 POST /product
+    return service.post('/product', data);
+}
+
+/**
+ * 更新商品信息 (PUT)
+ */
+export function updateProduct(id, data) {
+    // 假设后端更新接口是 PUT /product/{id}
+    return service.put(`/product/${id}`, data);
 }
