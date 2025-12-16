@@ -1,6 +1,8 @@
 package com.campus.mapper;
 
 import com.campus.model.Product;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -28,5 +30,12 @@ public interface ProductMapper {
      * @return 影响的行数 (通常为 1)
      */
     int updateProduct(Product product);
+    /**
+     * 逻辑删除商品（设置为下架状态 status=0）
+     * @param productId 商品ID
+     * @param sellerId 卖家ID (用于权限校验)
+     * @return 影响的行数 (通常为 1)
+     */
+    int deleteProduct(@Param("id") Integer productId, @Param("sellerId") Integer sellerId);
 
 }

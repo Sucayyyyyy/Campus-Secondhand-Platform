@@ -144,4 +144,35 @@ public class ProductServiceImpl implements ProductService {
         return result;
     }
 
+    @Override
+    public Map<String, Object> deleteProduct(Integer productId, Integer sellerId) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 1. 关键参数校验
+        if (productId == null || sellerId == null) {
+            result.put("success", false);
+            result.put("message", "商品ID和卖家ID不能为空");
+            return result;
+        }
+
+        try {
+            // 2. 调用 Mapper 执行逻辑删除（更新 status = 0）
+            int rows = productMapper.deleteProduct(productId, sellerId);
+
+            if (rows > 0) {
+                result.put("success", true);
+                result.put("message", "商品已成功下架/删除");
+            } else {
+                result.put("success", false);
+                result.put("message", "下架失败：商品不存在或您无权操作");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "服务器内部错误");
+        }
+
+        return result;
+    }
+
 }

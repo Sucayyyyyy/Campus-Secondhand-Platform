@@ -35,4 +35,12 @@ public interface ProductService {
      * @return 包含 success 状态和 message 的 Map
      */
     Map<String, Object> updateProduct(Product product);
+
+    /**
+     * 逻辑删除/下架商品
+     * @param productId 商品ID
+     * @param sellerId 执行操作的卖家ID
+     * @return 包含 success 状态和 message 的 Map
+     */
+    Map<String, Object> deleteProduct(Integer productId, Integer sellerId);
 }
