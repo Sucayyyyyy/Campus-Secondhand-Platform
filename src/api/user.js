@@ -51,6 +51,20 @@ service.interceptors.response.use(
 // 核心接口函数
 // **********************************
 
+
+/**
+ * 用户注册接口
+ * @param {object} data - 注册信息
+ */
+
+export function register(data) {
+  return request({
+    url: '/user/register', // 💡 确保这里和你后端的 @RequestMapping 对应
+    method: 'post',
+    data
+  })
+}
+
 /**
  * 用户登录接口
  * @param {object} data - 包含 username 和 password
@@ -59,15 +73,6 @@ service.interceptors.response.use(
 export function login(data) {
     // 对应后端接口：POST /api/user/login
     return service.post('/user/login', data);
-}
-
-/**
- * 用户注册接口
- * @param {object} data - 注册信息
- */
-export function userRegister(data) {
-    // 对应后端接口：POST /api/user/register
-    return service.post('/user/register', data);
 }
 
 // 待实现接口：获取用户信息

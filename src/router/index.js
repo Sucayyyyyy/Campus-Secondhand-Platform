@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth';
-
+import Detail from '@/views/front/Detail.vue'
 const routes = [
   // 1. 根路径：显式处理跳转
   {
@@ -60,11 +60,19 @@ const routes = [
         component: () => import('@/views/admin/CategoryManagement.vue'), 
       },
     ]
+
   },
   //6.点击卡片查看详情
   { path: '/detail/:id', 
+    name: 'Detail',
     component:Detail 
-  }
+  },
+//7.
+  {
+  path: '/detail/:id',
+  name: 'Detail',
+  component: () => import('@/views/front/Detail.vue')
+}
 ];
 
 const router = createRouter({

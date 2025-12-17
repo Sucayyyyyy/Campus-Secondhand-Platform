@@ -41,7 +41,7 @@ export const publishProduct = (data) => {
  */
 export function getProductDetail(id) {
     return request({
-        url: `/product/${id}`,
+        url: `/api//product/${id}`,
         method: 'get'
     })
 }
@@ -51,7 +51,7 @@ export function getProductDetail(id) {
  */
 export function deleteProduct(id) {
     return request({
-        url: `/product/${id}`,
+        url: `/api//product/${id}`,
         method: 'delete'
     })
 }
@@ -61,7 +61,7 @@ export function deleteProduct(id) {
  */
 export function updateProduct(id, data) {
     return request({
-        url: `/product/${id}`,
+        url: `/api/product/${id}`,
         method: 'put',
         data
     })
