@@ -1,7 +1,9 @@
 package com.campus.mapper;
 
 import com.campus.model.User;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface UserMapper {
     // 根据用户名查找用户
     User findByUsername(String username);

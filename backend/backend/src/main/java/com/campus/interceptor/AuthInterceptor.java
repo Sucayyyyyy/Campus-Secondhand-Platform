@@ -23,15 +23,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 2. 【已有】排除白名单路径
-        String path = request.getRequestURI();
-        if (path.contains("/login") || path.contains("/register") ||
-                path.contains("/product/list") || path.matches("/api/product/\\d+") ||
-                path.contains("/upload/image")) {
-            return true;
-        }
-
-        // 3. 【核心修正】：正确提取 Token
+        //  【核心修正】：正确提取 Token
         String token = request.getHeader("Authorization");
 
         // 如果 Token 以 "Bearer " 开头，截取后面的真实 Token 部分
@@ -44,10 +36,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         if (userId != null) {
             // 5. 验证成功
+            System.out.println("拦截器验证成功！当前用户ID：" + userId + "，访问路径：" + request.getRequestURI());
             request.setAttribute("currentUserId", userId);
             return true;
         } else {
             // 6. 验证失败
+            System.err.println("拦截器验证失败！Token 无效，访问路径：" + request.getRequestURI());
             response.setStatus(401);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"success\":false, \"message\":\"未登录或Token无效\"}");

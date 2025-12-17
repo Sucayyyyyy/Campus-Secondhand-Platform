@@ -106,4 +106,27 @@ WHERE id = #{id}
         ORDER BY
         publish_time DESC
     </select>
+
+    <insert id="insert" parameterType="com.campus.model.Product" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_product (
+            name,
+            category_id,
+            seller_id,
+            price,
+            description,
+            image_url,
+            status,
+            publish_time
+        ) VALUES (
+                     #{name},
+                     #{categoryId},
+                     #{sellerId},
+                     #{price},
+                     #{description},
+                     #{imageUrl},
+                     #{status},
+                     #{publishTime}
+                 )
+    </insert>
+
 </mapper>

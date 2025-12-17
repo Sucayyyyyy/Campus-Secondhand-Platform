@@ -27,6 +27,13 @@
         <property name="typeAliasesPackage" value="com.campus.model"/>
         <property name="mapperLocations" value="classpath:mapper/*.xml"/>
 
+        <property name="configuration">
+            <bean class="org.apache.ibatis.session.Configuration">
+                <property name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl" />
+                <property name="mapUnderscoreToCamelCase" value="true"/>
+            </bean>
+        </property>
+
         <property name="plugins">
             <array>
                 <bean class="com.github.pagehelper.PageInterceptor">

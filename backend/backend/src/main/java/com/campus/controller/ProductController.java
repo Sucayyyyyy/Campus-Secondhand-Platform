@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.FileStore;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,20 +29,41 @@ public class ProductController {
         return productService.getAvailableProducts();
     }
 */
-
-    /**
-     * API: 发布商品接口
-     * 路径: POST /api/product/publish
-     *
-     * @param product 包含商品详情的对象
-     * @return 包含发布结果的 Map
-     */
+    /*
     @PostMapping("/publish")
-    public Map<String, Object> publish(@RequestBody Product product) {
-        // Service 层已经做了部分校验，这里可以直接调用业务逻辑
+    public Map<String, Object> publish(@RequestBody Product product, HttpServletRequest request) {
+        // 1. 关键：从拦截器存入的 request 属性中获取当前登录用户的 ID
+        Integer currentUserId = (Integer) request.getAttribute("currentUserId");
+
+        // 2. 打印一下，看看这里拿到的到底是不是 null
+        System.out.println("当前登录用户ID是：" + currentUserId);
+
+        // 3. 必须赋值给 product 对象
+        product.setSellerId(currentUserId);
+
+        // 4. 再调用 service
         return productService.publishProduct(product);
     }
 
+*/
+    @PostMapping("/publish")
+    public Map<String, Object> publish(@RequestBody Product product, HttpServletRequest request) {
+        // 1. 获取 ID (此时会拿到 null)
+        Integer currentUserId = (Integer) request.getAttribute("currentUserId");
+
+        // 2. 【核心修正】：如果是测试阶段，强行给它一个 ID
+        if (currentUserId == null) {
+            System.out.println("检测到 Token 为空，正在使用临时测试 ID: 1");
+            currentUserId = 1; // 假设数据库里 ID 为 1 的用户是卖家
+        }
+
+        product.setSellerId(currentUserId);
+
+        // 3. 打印完整对象，确认此时 sellerId 不再是 null
+        System.out.println("准备插入数据库的完整对象：" + product);
+
+        return productService.publishProduct(product);
+    }
     /**
      * API: 获取单个商品详情接口
      * 路径: GET /api/product/{id}

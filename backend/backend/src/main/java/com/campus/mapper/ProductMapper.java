@@ -1,13 +1,14 @@
 package com.campus.mapper;
 
 import com.campus.model.Product;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.Map;
 import java.util.List;
 
 /**
  * 商品数据访问接口
- */
+ */@Mapper
 public interface ProductMapper {
 
     /**
@@ -44,4 +45,13 @@ public interface ProductMapper {
      * @return Product 对象列表
      */
     List<Product> selectProductsBySellerId(Map<String, Object> params);
+
+    /**
+     * 插入商品数据
+     * @param product 商品对象
+     * @return 影响的行数
+     */
+    int insert(Product product);
+
+
 }
