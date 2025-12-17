@@ -1,17 +1,18 @@
-import request from '@/utils/request' // 统一使用这个
+import request from '@/utils/request' 
 
 /**
  * 1. 获取所有商品列表 (首页/管理页通用)
  */
 export function getAllProducts(query) { 
     return request({
-        url: '/product/list',
+        // 注意：如果你的基础路径没带 /api，这里要写成 /api/product/list
+        url: 'product/list', 
         method: 'get',
         params: query
     })
 }
 
-// 别名，为了兼容你之前的代码调用
+// 统一使用别名，不要重复定义函数体
 export const getProductList = getAllProducts;
 
 /**
@@ -34,9 +35,6 @@ export const publishProduct = (data) => {
     data
   })
 }
-
-// 别名，为了兼容你刚才写的函数名
-export const createProduct = publishProduct;
 
 /**
  * 4. 获取指定ID的商品详情
