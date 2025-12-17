@@ -1,48 +1,59 @@
 import { createRouter, createWebHistory } from 'vue-router'
- 
 import { useAuthStore } from '@/stores/auth';
 
-
 const routes = [
-  // 前台首页
+  // 1. 根路径：显式处理跳转
   {
     path: '/',
-    name: 'Home',
-    component: () => import('@/views/front/Home.vue')
+    name: 'Root',
+    redirect: to => {
+      const token = localStorage.getItem('campus_user_token');
+      // 如果有 token 就去后台，没 token 就去登录
+      return token ? '/admin/dashboard' : '/admin/login';
+    }
   },
-
-  // **新增：商品详情页**
+  // 2. 前台首页
   {
-    path: '/detail/:id', // 使用动态参数 :id 来匹配商品ID
+    path: '/home',
+    name: 'Home',
+    component: () => import('@/views/front/Home.vue'),
+    meta: { requiresAuth: true } 
+  },
+  // 3. 商品详情页
+  {
+    path: '/detail/:id',
     name: 'ProductDetail',
     component: () => import('@/views/front/ProductDetail.vue')
   },
-  // 后台登录页
+  // 4. 后台登录页
   {
     path: '/admin/login',
     name: 'AdminLogin',
     component: () => import('@/views/admin/AdminLogin.vue')
   },
-  // 后台管理面板
+  // 5. 后台管理面板
   {
     path: '/admin',
     name: 'Admin',
     component: () => import('@/views/admin/AdminLayout.vue'),
-    redirect: '/admin/dashboard', // 访问 /admin 自动重定向
-    meta: { requiresAuth: true }, // 整个后台区域都需要权限
+    redirect: '/admin/dashboard',
+    meta: { requiresAuth: true }, 
     children: [
       {
         path: 'dashboard', 
         name: 'AdminDashboard',
         component: () => import('@/views/admin/Dashboard.vue'), 
       },
-      // 商品管理路由 (引用了您刚刚创建的占位符文件)
+      {
+        path: 'add-product',
+        name: 'AddProduct',
+        component: () => import('@/views/admin/AddProduct.vue'), 
+      },
       {
         path: 'products',
         name: 'ProductManagement',
         component: () => import('@/views/admin/ProductManagement.vue'), 
       },
-      // 分类管理路由 (引用了您刚刚创建的占位符文件)
       {
         path: 'categories',
         name: 'CategoryManagement',
@@ -50,7 +61,6 @@ const routes = [
       },
     ]
   }
-  
 ];
 
 const router = createRouter({
@@ -58,35 +68,39 @@ const router = createRouter({
   routes: routes,
 })
 
-// 引入一个全局变量来存储 authStore，确保它只实例化一次
-let authStore;
+// 全局前置守卫
 router.beforeEach((to, from, next) => {
-  // 1. 【核心修复】：在守卫第一次执行时才实例化 Store
-  if (!authStore) {
-    authStore = useAuthStore(); 
-  }
+  const authStore = useAuthStore();
   
-  // 检查目标路由是否需要认证（我们使用 meta: { requiresAuth: true } 标记）
+  // 统一获取登录状态
+  const token = localStorage.getItem('campus_user_token');
+  const isLoggedIn = authStore.isLoggedIn || !!token;
+
+  // 核心逻辑修改：
+  // 1. 如果去的是根路径 "/"
+  if (to.path === '/') {
+    if (isLoggedIn) {
+      next({ name: 'AdminDashboard' });
+    } else {
+      next({ name: 'AdminLogin' });
+    }
+    return; // 必须 return，否则会执行下面的 next() 导致重复
+  }
+
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   
-  // 检查用户是否已登录
-  const isLoggedIn = authStore.isLoggedIn;
-
-  // 场景 1: 目标路由需要登录权限，但用户未登录
+  // 场景 A: 访问受限页面且未登录
   if (requiresAuth && !isLoggedIn) {
-    // 重定向到登录页
     next({ name: 'AdminLogin' });
-  
-  // 场景 2: 用户已登录，但尝试访问登录页
-  } else if (isLoggedIn && to.name === 'AdminLogin') {
-    // 阻止访问登录页，跳转到管理面板
+  } 
+  // 场景 B: 已登录用户尝试去登录页
+  else if (to.name === 'AdminLogin' && isLoggedIn) {
     next({ name: 'AdminDashboard' });
-
-  // 场景 3: 正常放行
-  } else {
+  } 
+  // 场景 C: 正常放行
+  else {
     next();
   }
 });
 
-
-export default router
+export default router;

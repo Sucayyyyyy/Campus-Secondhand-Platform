@@ -2,7 +2,7 @@
   <div class="login-page">
     <div class="login-card">
       
-      <h2 class="title">{{ isLoginMode ? '管理员登录' : '管理员注册' }}</h2>
+      <h2 class="title">{{ isLoginMode ? '校园二手平台登录' : '管理员注册' }}</h2>
 
       <form @submit.prevent="isLoginMode ? login() : register()">
         

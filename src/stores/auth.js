@@ -1,49 +1,60 @@
 import { defineStore } from 'pinia';
-import { userLogin, getUserProfile } from '@/api/user'; // 导入API
+// 【修正 1】：导入时使用 as 起别名，避免和下面的 login action 同名冲突
+import { login as loginApi, getUserProfile } from '@/api/user'; 
 
-// 假设我们使用localStorage来保持登录状态
+
 const TOKEN_KEY = 'campus_user_token';
 const USER_INFO_KEY = 'campus_user_info';
 
 export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        token: localStorage.getItem(TOKEN_KEY) || null, // 从本地存储加载Token
-        userInfo: JSON.parse(localStorage.getItem(USER_INFO_KEY)) || null, // 从本地存储加载用户信息
-        isLoggedIn: !!localStorage.getItem(TOKEN_KEY), // 根据Token判断是否登录
-    }),
+   state: () => {
+        // 1. 先把字符串取出来
+        const savedUserInfo = localStorage.getItem(USER_INFO_KEY);
+        
+        return {
+            token: localStorage.getItem(TOKEN_KEY) || null,
+            // 2. 【核心修复】：增加逻辑判断，只有当字符串存在且不是 "undefined" 时才解析
+            userInfo: (savedUserInfo && savedUserInfo !== "undefined") 
+                       ? JSON.parse(savedUserInfo) 
+                       : null,
+            isLoggedIn: !!localStorage.getItem(TOKEN_KEY),
+        };
+    },
     
     actions: {
-        /**
-         * 处理用户登录逻辑
-         * @param {string} username 
-         * @param {string} password
-         */
         async login(username, password) {
             try {
-                // 调用后端登录接口
-                const response = await userLogin({ username, password });
+                // 【修正 2】：使用别名调用 API 接口
+                // 这里的 res 结构取决于你在 axios 拦截器里的设置
+                const res = await loginApi({ username, password });
                 
-                // 【重要】根据后端实际返回结构调整
-                // 假设后端返回 { token: '...', user: { id: 1, name: '管理员' } }
-                const { token, user } = response.data; 
+                // 【修正 3】：健壮性处理
+                // 如果后端返回的是 { success, token, user }，直接解构 res.data
+                // 如果 axios 拦截器已经 return 了 response.data，则直接解构 res
+                const data = res.data || res;
+                const { token, user } = data; 
 
-                // 存储状态到 Store 和本地存储
+                if (!token) {
+                    throw new Error('登录响应中未获取到 Token');
+                }
+
+                // 3. 存储状态到 Store
                 this.token = token;
                 this.userInfo = user;
                 this.isLoggedIn = true;
                 
+                // 4. 存储到本地（统一使用常量 TOKEN_KEY）
                 localStorage.setItem(TOKEN_KEY, token);
                 localStorage.setItem(USER_INFO_KEY, JSON.stringify(user));
                 
-                return true; // 登录成功
+                return true; 
             } catch (error) {
-                this.logout(); // 登录失败时清除状态
-                console.error('登录失败:', error);
-                throw error; // 抛出错误给组件处理
+                this.logout(); 
+                console.error('Store 登录失败:', error);
+                throw error; 
             }
         },
 
-        // 登出操作
         logout() {
             this.token = null;
             this.userInfo = null;
@@ -52,16 +63,16 @@ export const useAuthStore = defineStore('auth', {
             localStorage.removeItem(USER_INFO_KEY);
         },
 
-        // 获取用户详情（待实现接口）
         async fetchProfile() {
             if (!this.token) return;
             try {
                 const response = await getUserProfile();
-                this.userInfo = response.data; // 更新 Store 中的用户信息
-                localStorage.setItem(USER_INFO_KEY, JSON.stringify(response.data));
+                const data = response.data || response;
+                this.userInfo = data;
+                localStorage.setItem(USER_INFO_KEY, JSON.stringify(data));
             } catch (error) {
                 console.error('获取用户信息失败', error);
-                this.logout(); // 获取失败可能需要强制登出
+                this.logout();
             }
         }
     }
