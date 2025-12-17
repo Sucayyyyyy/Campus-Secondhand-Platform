@@ -60,6 +60,10 @@ const routes = [
         component: () => import('@/views/admin/CategoryManagement.vue'), 
       },
     ]
+  },
+  //6.点击卡片查看详情
+  { path: '/detail/:id', 
+    component:Detail 
   }
 ];
 
