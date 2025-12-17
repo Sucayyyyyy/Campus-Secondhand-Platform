@@ -1,282 +1,231 @@
 <template>
-  <div class="home-page">
-    
-    <header class="main-header">
-      <div class="header-content">
-        <div class="logo">LOGO / 二手平台</div>
-        <nav class="main-nav">
-          <a href="/" class="nav-item active">首页</a>
-          <a href="/mylisting" class="nav-item">我的发布</a>
-          <a href="/admin/login" class="nav-item">登录/注册</a>
-        </nav>
-        <div class="user-profile">
-          <div class="avatar">L</div>
-          <span>您好, Leo!</span>
+  <div class="home-wrapper">
+    <div class="nav-bar">
+      <div class="nav-content">
+        <div class="logo">校园二手市场</div>
+        <div class="search-area">
+          <el-input
+            v-model="searchQuery"
+            placeholder="搜学姐的电脑、学长的考研书..."
+            :prefix-icon="Search"
+            class="search-input"
+            @keyup.enter="handleSearch"
+          />
+        </div>
+        <div class="nav-links">
+          <el-button link @click="$router.push('/home')">首页</el-button>
+          <el-button type="primary" plain @click="$router.push('/admin')">进入后台</el-button>
         </div>
       </div>
-    </header>
-
-    <div class="search-section">
-      <h1 class="platform-title">校园二手交易平台</h1>
-      <div class="search-bar-container">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="搜索您想要的二手物品..." 
-          class="search-input"
-        />
-        <button @click="handleSearch" class="search-button">搜索</button>
-      </div>
     </div>
 
-    <div class="content-section">
-      <h2 class="section-title">最新发布</h2>
-      
-      <div v-if="isLoading" class="loading">加载中...</div>
-      
-      <div v-else-if="productList.length === 0" class="empty-state">
-        暂无商品发布。
-      </div>
+    <el-main class="main-content">
+      <el-carousel height="280px" class="banner">
+        <el-carousel-item v-for="item in banners" :key="item">
+          <div class="banner-item" :style="{ backgroundColor: item.color }">
+            <h2>{{ item.text }}</h2>
+          </div>
+        </el-carousel-item>
+      </el-carousel>
 
-      <div v-else class="product-grid">
-        <ProductCard 
-          v-for="product in productList" 
-          :key="product.id" 
-          :product="product" 
-        />
+      <div class="product-section">
+        <h3 class="section-title">最新发布</h3>
+        <el-row :gutter="20">
+          <el-col 
+            :xs="12" :sm="8" :md="6" :lg="4.8" 
+            v-for="product in productList" 
+            :key="product.id"
+            class="product-col"
+          >
+            <el-card 
+              :body-style="{ padding: '0px' }" 
+              shadow="hover" 
+              class="product-card"
+              @click="$router.push(`/detail/${product.id}`)"
+            >
+              <div class="image-placeholder">
+                <img v-if="product.imageUrl" :src="product.imageUrl" class="image" />
+                <el-icon v-else class="empty-icon"><Picture /></el-icon>
+              </div>
+              <div class="info">
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-bottom">
+                  <span class="price">¥ {{ product.price }}</span>
+                  <span class="category">{{ product.categoryName }}</span>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
       </div>
-    </div>
+    </el-main>
 
-    <footer class="main-footer">
-      <p>Copyright © 校园二手交易平台 | All Rights Reserved.</p>
-      <div class="social-links">
-        <span>联系我们</span>
-      </div>
+    <footer class="footer">
+      <p>© 2023 校园二手交易平台 - 助力校园绿色循环</p>
     </footer>
-
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import ProductCard from '@/components/business/ProductCard.vue'; // 确保路径正确
+import { Search, Picture } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
+import { getAllProducts } from '@/api/product'; // 导入新接口
 
-// 状态和数据
 const searchQuery = ref('');
-const isLoading = ref(false);
+const loading = ref(false);
+const productList = ref([]); // 初始为空列表
 
-// -------------------------------------------------------------------
-// 模拟商品数据：用于展示界面的美化效果
-// -------------------------------------------------------------------
-const productList = ref([
-    { id: 1, name: '9成新笔记本电脑', price: 2500.00, location: '图书馆', imageUrl: 'laptop' },
-    { id: 2, name: '二手吉他一把', price: 300.00, location: '宿舍楼', imageUrl: 'guitar' },
-    { id: 3, name: '高数课本（带笔记）', price: 35.50, location: '教学楼', imageUrl: 'book' }
-]);
+// 模拟的 Banner 数据
+const banners = [
+  { text: '毕业季，书本大清仓', color: '#409EFF' },
+  { text: '寻找心动的数码好物', color: '#67C23A' }
+];
 
-// 搜索逻辑
-const handleSearch = () => {
-    console.log('搜索内容:', searchQuery.value);
-    // TODO: 实现 API 搜索逻辑
+//  获取真实数据的函数
+const fetchProducts = async () => {
+  loading.value = true;
+  try {
+    const res = await getAllProducts();
+    // 假设后端返回的数据在 res.data 中
+    productList.value = res.data; 
+  } catch (error) {
+    console.error('获取商品失败:', error);
+    ElMessage.error('无法加载商品列表，请检查网络或后端');
+  } finally {
+    loading.value = false;
+  }
 };
 
-// 实际项目应在 onMounted 中调用 API 获取数据
 onMounted(() => {
-    // fetchProducts(); // 实际项目中取消注释，调用真正的获取数据函数
+  fetchProducts(); // 页面一加载就去拿数据
 });
 
-// 真正的获取数据函数 (示例)
-const fetchProducts = async () => {
-    isLoading.value = true;
-    try {
-        // const response = await getProductList(); // 调用 API
-        // productList.value = response.data;
-    } catch (error) {
-        console.error('获取商品列表失败:', error);
-    } finally {
-        isLoading.value = false;
-    }
+const handleSearch = () => {
+  // 简单的本地搜索过滤演示（可选）
+  console.log('搜索内容：', searchQuery.value);
 };
 </script>
 
-
 <style scoped>
-/* ===================================================================
-   整体布局与基础样式
-   =================================================================== */
-.home-page {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: #f7f9fb; /* 柔和浅灰色背景 */
+.home-wrapper {
+  background-color: #f5f7fa;
+  min-height: 100vh;
 }
 
-/* ===================================================================
-   1. 顶部导航栏 (Header) 样式
-   =================================================================== */
-.main-header {
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 0 30px;
+.nav-bar {
+  background-color: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 60px;
+.nav-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
 }
 
 .logo {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-}
-
-.main-nav {
-    display: flex;
-    gap: 25px;
-}
-
-.nav-item {
-    color: #555;
-    text-decoration: none;
-    font-size: 15px;
-    padding: 2px 0;
-    transition: color 0.3s;
-}
-
-.nav-item:hover, .nav-item.active {
-    color: #42b983; /* 品牌色 */
-    border-bottom: 2px solid #42b983;
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #555;
-}
-
-.avatar {
-    width: 30px;
-    height: 30px;
-    background-color: #e0e0e0;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-}
-
-
-/* ===================================================================
-   2. 中心搜索区
-   =================================================================== */
-.search-section {
-    padding: 50px 20px 70px;
-    text-align: center;
-    background-color: #fff; /* 搜索区背景可以为白色 */
-    border-bottom: 1px solid #eee;
-}
-
-.platform-title {
-    font-size: 36px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 30px;
-}
-
-.search-bar-container {
-    display: flex;
-    justify-content: center;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 搜索框阴影 */
-    border-radius: 8px;
-    overflow: hidden; /* 确保子元素不超出圆角 */
+  font-size: 20px;
+  font-weight: bold;
+  color: #409EFF;
 }
 
 .search-input {
-    flex-grow: 1;
-    padding: 15px 20px;
-    border: none;
-    font-size: 16px;
-    outline: none;
+  width: 450px;
 }
 
-.search-button {
-    padding: 15px 25px;
-    background-color: #42b983;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s;
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.search-button:hover {
-    background-color: #369c70;
+.banner {
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 30px;
 }
 
-
-/* ===================================================================
-   3. 商品展示区
-   =================================================================== */
-.content-section {
-    flex-grow: 1;
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 0 20px;
-    width: 100%;
+.banner-item {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
 .section-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 25px;
-    border-left: 4px solid #42b983; /* 增加品牌色装饰线 */
-    padding-left: 10px;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
 }
 
-.product-grid {
-    display: grid;
-    /* 响应式网格：最小宽度 280px，自动填充 */
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
+.product-card {
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  transition: transform 0.3s;
 }
 
-.empty-state {
-    text-align: center;
-    color: #999;
-    padding: 50px;
-    background: white;
-    border-radius: 8px;
+.product-card:hover {
+  transform: translateY(-5px);
 }
 
-
-/* ===================================================================
-   4. 底部页脚 (Footer) 样式
-   =================================================================== */
-.main-footer {
-    background-color: #333;
-    color: #ccc;
-    padding: 20px 30px;
-    text-align: center;
-    font-size: 14px;
-    margin-top: auto; /* 保持页脚在最底部 */
+.image-placeholder {
+  height: 180px;
+  background-color: #e4e7ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.social-links {
-    margin-top: 10px;
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.social-links span {
-    margin: 0 10px;
-    cursor: pointer;
+.info {
+  padding: 12px;
+}
+
+.product-name {
+  font-size: 15px;
+  height: 40px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.product-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  color: #f56c6c;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.category {
+  font-size: 12px;
+  color: #909399;
+  background: #f0f2f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.footer {
+  text-align: center;
+  padding: 40px 0;
+  color: #909399;
 }
 </style>
