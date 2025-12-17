@@ -42,7 +42,7 @@ public class CategoryController {
      * GET /api/category
      * 查询所有分类
      */
-    @GetMapping
+    @GetMapping("list")
     public ResponseResult getAllCategories() {
         return ResponseResult.success("查询成功", categoryService.getAllCategories());
     }
