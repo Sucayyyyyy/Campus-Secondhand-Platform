@@ -5,8 +5,11 @@ import com.campus.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.FileStore;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController// @Controller + @ResponseBody (所有方法返回值自动转换为 JSON)
 @RequestMapping("/api/product")
@@ -77,12 +80,15 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, Object> delete(@PathVariable("id") Integer id) {
-
-        // 🚨 临时处理：这里依然是安全漏洞！
-        // 必须从用户的 Session/Token 中获取当前登录用户的 ID
-        Integer currentSellerId = 1; // ⚠️ 临时假定 sellerId 为 1 进行测试
-
+    public Map<String, Object> delete(@PathVariable("id") Integer id,HttpServletRequest  request) {
+        Integer currentSellerId = (Integer) request.getAttribute("currentUserId"); // ⚠️ 临时假定 sellerId 为 1 进行测试
+        if (currentSellerId == null) {
+            // 理论上不会走到这里，因为拦截器已处理 401，但作为保障
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("message", "用户未登录，操作失败");
+            return result;
+        }
         return productService.deleteProduct(id, currentSellerId);
     }
 

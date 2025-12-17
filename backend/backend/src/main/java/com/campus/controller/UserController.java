@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/user") // 用户相关的接口都放在 /api/user 下
 public class UserController {
 
     @Autowired
-    private UserService userService; 
+    private UserService userService;
     @Autowired
     private ProductService productService;
 

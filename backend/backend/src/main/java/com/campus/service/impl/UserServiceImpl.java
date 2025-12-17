@@ -4,6 +4,7 @@ import com.campus.mapper.UserMapper;
 import com.campus.model.User;
 // ... 其他 import ...
 import com.campus.service.UserService;
+import com.campus.util.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,6 +73,15 @@ public class UserServiceImpl implements UserService {
         // 2. 校验密码
         if (existingUser.getPassword().equals(user.getPassword())) {
 
+
+            String token = TokenManager.createToken(existingUser.getId()); // 注意：这里应该使用 existingUser.getId()
+
+            // 2. 组装返回数据
+            result.put("success", true);
+            result.put("msg", "登录成功");
+
+            // 3. 将 Token 返回给前端
+            result.put("token", token);
             // 登录成功：组装不包含密码的返回数据
             Map<String, Object> data = new HashMap<>();
             data.put("id", existingUser.getId());
@@ -79,8 +89,6 @@ public class UserServiceImpl implements UserService {
             data.put("phone", existingUser.getPhone());
 
             // 提示：高级项目中，这里通常还会生成并返回 JWT Token
-            result.put("success", true);
-            result.put("msg", "登录成功");
             result.put("data", data);
         } else {
             // 密码错误

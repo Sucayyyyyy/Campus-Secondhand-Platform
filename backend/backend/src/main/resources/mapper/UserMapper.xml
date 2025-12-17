@@ -21,7 +21,7 @@
         VALUES (#{username}, #{password}, #{phone}, NOW()) </insert>
 
     <sql id="User_Base_Column_List">
-        id, username, nickname, email, phone, avatar_url, register_time
+        id, username, email, phone, avatar_url, register_time
     </sql>
 
     <select id="selectById" parameterType="int" resultType="com.campus.model.User">
