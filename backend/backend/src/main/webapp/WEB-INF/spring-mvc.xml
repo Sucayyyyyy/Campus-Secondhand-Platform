@@ -23,6 +23,7 @@
             <mvc:mapping path="/api/**"/>
             <mvc:exclude-mapping path="/api/user/login"/>
             <mvc:exclude-mapping path="/api/category/list"/>
+            <mvc:exclude-mapping path="/api/product/list"/>
             <bean class="com.campus.interceptor.AuthInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>

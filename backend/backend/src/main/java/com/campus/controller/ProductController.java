@@ -29,7 +29,7 @@ public class ProductController {
         return productService.getAvailableProducts();
     }
 */
-    /*
+
     @PostMapping("/publish")
     public Map<String, Object> publish(@RequestBody Product product, HttpServletRequest request) {
         // 1. 关键：从拦截器存入的 request 属性中获取当前登录用户的 ID
@@ -45,25 +45,8 @@ public class ProductController {
         return productService.publishProduct(product);
     }
 
-*/
-    @PostMapping("/publish")
-    public Map<String, Object> publish(@RequestBody Product product, HttpServletRequest request) {
-        // 1. 获取 ID (此时会拿到 null)
-        Integer currentUserId = (Integer) request.getAttribute("currentUserId");
 
-        // 2. 【核心修正】：如果是测试阶段，强行给它一个 ID
-        if (currentUserId == null) {
-            System.out.println("检测到 Token 为空，正在使用临时测试 ID: 1");
-            currentUserId = 1; // 假设数据库里 ID 为 1 的用户是卖家
-        }
 
-        product.setSellerId(currentUserId);
-
-        // 3. 打印完整对象，确认此时 sellerId 不再是 null
-        System.out.println("准备插入数据库的完整对象：" + product);
-
-        return productService.publishProduct(product);
-    }
     /**
      * API: 获取单个商品详情接口
      * 路径: GET /api/product/{id}

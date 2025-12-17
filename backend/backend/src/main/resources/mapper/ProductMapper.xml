@@ -30,25 +30,7 @@
         publish_time DESC
     </select>
 
-    <insert id="insertProduct" parameterType="com.campus.model.Product" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO t_product (
-            name,
-            category_id,
-            seller_id,        price,
-            description,
-            image_url,
-            status,
-            publish_time      ) VALUES (
-                                           #{name},
-                                           #{categoryId},
-                                           #{sellerId},
-                                           #{price},
-                                           #{description},
-                                           #{imageUrl},
-                                           #{status},
-                                           #{publishTime}
-                                       )
-    </insert>
+
     <sql id="Base_Column_List">
         id, name, category_id, seller_id, price, description, image_url, status, publish_time
     </sql>
