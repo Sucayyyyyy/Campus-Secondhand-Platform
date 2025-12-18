@@ -52,4 +52,6 @@ public interface ProductService {
      * 获取用户发布的商品列表（支持分页和搜索）
      */
     Map<String, Object> getProductsBySellerId(Integer sellerId, Integer pageNum, Integer pageSize, String keyword);
+
+    Product getById(Long id);
 }

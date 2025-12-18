@@ -162,4 +162,9 @@ public class ProductServiceImpl implements ProductService {
         }
         return result;
     }
+
+    @Override
+    public Product getById(Long id) {
+        return productMapper.selectDetailById(id);
+    }
 }

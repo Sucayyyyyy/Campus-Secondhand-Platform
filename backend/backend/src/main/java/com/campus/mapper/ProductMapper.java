@@ -54,4 +54,5 @@ public interface ProductMapper {
     int insert(Product product);
 
 
+    Product selectDetailById(Long id);
 }
